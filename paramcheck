@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>パラメータのチェック</title>
+<style>
+  textarea{
+   width: 500px;
+   height: 100px;
+    }
+              p{
+
+                            color: #5f5f5f;
+              }
+              .list2{
+                            list-style: disc;
+                            color: #f00;
+              }
+              .margin_btm{
+                                          margin-bottom: 1rem;
+              }
+</style>
+<script>
+              function check(){
+                            var txt1 = document.getElementById('box_1').value ;
+                            var result_source = document.querySelector('li');
+                            var result_medium = document.getElementById('medium');
+                            var result_campaign = document.getElementById('campaign');
+                            var result_content = document.getElementById('content');
+                            var hatena = txt1.indexOf('utm_content');
+                            var utmsc = txt1.indexOf('utm_source');
+                            var utmmd = txt1.indexOf('utm_medium');
+                            var utmcam = txt1.indexOf('utm_campaign');
+                            var question = txt1.indexOf('?');
+                            var hash = txt1.indexOf('#');
+                            var after_content = txt1.slice(hatena);
+                            var content_tohash = txt1.slice(hatena,hash);
+                            var after_campaign = txt1.slice(utmcam,hatena);
+                            var after_medium = txt1.slice(utmmd,utmcam);
+                            var after_source = txt1.slice(utmsc,utmmd);
+                            var after_question = txt1.slice(question);
+                            var after_hash = txt1.slice(hash);
+                            var aft = document.getElementById('after_content');
+                            var aft_cam = document.getElementById('after_campaign');
+                            var aft_md = document.getElementById('after_medium');
+                            var aft_sc = document.getElementById('after_source');
+                          if(txt1){
+                                          window.alert(txt1 + 'を確認します');
+                                          if(txt1.match(/utm_source=/)){
+                                                        result_source.innerHTML = after_source;
+                                          }else{
+                                                        result_source.innerHTML = 'utm_source=がありません。';
+                                          }
+                            if(txt1.match(/utm_medium=/)){
+                                          result_medium.innerHTML = after_medium;
+                            }else{result_medium.innerHTML = 'utm_medium=がありません。';}
+                            if(txt1.match(/utm_campaign=/)){
+                                                        result_campaign.innerHTML = after_campaign;
+                                          }else{
+                                                        result_campaign.innerHTML = 'utm_campaign=がありません。';
+                                          }
+                            if(txt1.match(/utm_content=/)){
+                                          result_content.innerHTML = after_content;
+                                          }else{
+                                                        result_content.innerHTML = 'utm_content=がありませんがよろしいですか?';
+                                          }
+                            var test_content = txt1.slice(hatena + 1);
+              //ここからutm_content以下の構造チェック
+                            if(after_content.match(/utm_source/)){
+                                          aft.innerHTML = 'utm_content=以降にutm_source';}else if(after_content.match(/utm_medium/)){
+                                          aft.innerHTML = 'utm_content=以降にutm_medium';
+                                          }else if(test_content.match(/utm_content/)){
+                                                        aft.innerHTML = 'utm_content=以降にutm_content';
+                                          }else if(after_content.match(/utm_campaign/)){
+                                                        aft.innerHTML = 'utm_content=以降にutm_campaign';
+                                          }else{
+                                          aft.innerHTML = null;
+                                          }
+                            //utm_campaign以下の構造チェック
+var utmcam_b = utmcam + 1;
+var test_campaign = txt1.slice(utmcam_b,hatena);
+if(after_campaign.match(/utm_source/)){
+                            aft_cam.innerHTML = 'utm_campaign以降にutm_source';}else if(after_campaign.match(/utm_medium/)){
+                                          aft_cam.innerHTML = 'utm_campaign以降にutm_medium';
+                                          }else if(test_campaign.match(/utm_campaign/)){
+                                                        aft_cam.innerHTML = 'utm_campaign以降にutm_campaign';
+                                          }else{
+                                          aft_cam.innerHTML = null;}
+                            //utm_medium以下の構造チェック
+var utmmd_b = utmmd + 1;
+var test_medium = txt1.slice(utmmd_b,utmcam);
+if(after_medium.match(/utm_source/)){
+                            aft_md.innerHTML = 'utm_medium以降にutm_source';}else if(test_medium.match(/utm_medium/)){
+                                                        aft_md.innerHTML = 'utm_medium以降にutm_medium';
+                                          }else{
+                                          aft_md.innerHTML = null;}
+                            //utm_source以下の構造チェック
+var utmsc_b = utmsc + 1;
+var test_source = txt1.slice(utmsc_b,utmmd);
+if(test_source.match(/utm_source/)){
+              aft_sc.innerHTML = 'utm_source以降にutm_source';
+}else{aft_sc.innerHTML = null;}
+                            //?チェックここから
+var question_b = question +1;
+var test_question = txt1.slice(question_b);
+if(test_question.match(/\?/)){
+              window.alert('?が２つ以上あります。確認してください');
+}
+                            //#チェックここから
+var hash_b = hash +1 ;
+var test_hash = txt1.slice(hash_b);
+if(hash != -1 && test_hash.match(/utm/)){
+              document.getElementById('hash').textContent = after_hash;
+                            //if(test_hash.match(/utm/)){
+                                          document.getElementById('after_hash').textContent = '#の位置を確認してください';
+                            }else if(hash != -1){
+                                          document.getElementById('hash').textContent = after_hash;
+                                          document.getElementById('after_hash').textContent = null;
+                                          document.getElementById('content').textContent = content_tohash;
+              }else{
+                            document.getElementById('hash').textContent = '#はなし';
+                            document.getElementById('after_hash').textContent = null;
+              }
+                            //構造チェックここまで
+                            }else{
+                                          window.alert('ボックス内に入力してください');
+                                          var del = document.querySelectorAll('li');
+                                          del.forEach(function(elem){
+                                                        elem.textContent = null;
+                                          })
+                            }
+              }
+//ここからエンコード、デコードの関数
+function ecd(){
+              var url_1 = document.getElementById('box_2').value;
+              if(url_1){
+              var encoded = encodeURIComponent(url_1);
+              window.alert('エンコードします');
+              document.getElementById('box_3').value = encoded;
+              }else{
+                            window.alert('ボックス内に入力してください');
+              }
+}
+function dcd(){
+              var url_2 = document.getElementById('box_2').value;
+              if(url_2){
+              var decoded = decodeURIComponent(url_2);
+              window.alert('デコードします');
+              document.getElementById('box_3').value = decoded;
+              }else{
+                            window.alert('ボックス内に入力してください');
+              }
+}
+function rld(){
+              window.location.reload();
+}
+window.onerror = function(e){
+              window.alert('JavaScriptエラーです。コンソールを確認してください。\n'+ '内容: ' + e);
+}
+</script>
+</head>
+<body>
+<div id="wrapper">
+<p>以下のボックスにURLを入力する</p>
+<div class="margin_btm">
+<textarea id="box_1" class="txtarea" word-wrap="break-word" cols="25" ></textarea>
+</div>
+<button id="btn1" onclick="check()">チェックする</button>
+<button onclick="rld()">リロードする</button>
+<p>各utmの値が表示されます</p>
+<ul>
+              <li class="list"></li>
+              <li class="list" id="medium"></li>
+              <li class="list" id="campaign"></li>
+              <li class="list" id="content"></li>
+              <li class="list" id="hash"></li>
+</ul>
+<p>誤りと思われる内容が表示されます(?の重複があればwindow.alertで警告)</p>
+<ul>
+              <li class="list2" id="after_source"></li>
+              <li class="list2" id="after_medium"></li>
+              <li class="list2" id="after_campaign"></li>
+              <li class="list2" id="after_content"></li>
+              <li class="list2" id="after_hash"></li>
+</ul>
+<p>上のボックスの文字列をエンコードまたはデコードした結果を下のボックスに表示します</p>
+<button class="margin_btm" onclick="ecd()">エンコードする</button>
+<button class="margin_btm" onclick="dcd()">デコードする</button>
+<div>
+<textarea id="box_2" class="txtarea" word-wrap="break-word" cols="25" ></textarea>
+</div>
+<div>
+<textarea id="box_3" class="txtarea" word-wrap="break-word" cols="25" ></textarea>
+</div>
+</div>
+</body>
+</html>
